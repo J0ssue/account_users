@@ -1,15 +1,14 @@
 import { Layout, Typography } from "antd";
+import KHeader from "./components/molecules/KHeader";
+import "./less/App.less";
 
-const { Content, Header } = Layout;
+const { Content } = Layout;
 const { Title } = Typography;
 
 function App() {
   return (
     <Layout className="App">
-      <Header className="bg-none">
-        <Title className="text-title">Account users</Title>
-        Header
-      </Header>
+      <KHeader />
       <Content>Content</Content>
     </Layout>
   );
