@@ -1,12 +1,15 @@
-import { Layout } from "antd";
-import "./less/main.less";
+import { Layout, Typography } from "antd";
 
-const { Content, Footer, Header } = Layout;
+const { Content, Header } = Layout;
+const { Title } = Typography;
 
 function App() {
   return (
     <Layout className="App">
-      <Header className="bg-none">Header</Header>
+      <Header className="bg-none">
+        <Title className="text-title">Account users</Title>
+        Header
+      </Header>
       <Content>Content</Content>
     </Layout>
   );
