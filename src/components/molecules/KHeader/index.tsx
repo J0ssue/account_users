@@ -6,10 +6,10 @@ const { Title } = Typography;
 function KHeader() {
   return (
     <PageHeader
-      title={<Title className="text-title">Account users</Title>}
+      title={<Title className="text-title-size">Account users</Title>}
       className="klaus-page-header"
       extra={[
-        <AutoComplete options={[{}, {}]}>
+        <AutoComplete key="1" options={[{ key: "3" }, { key: "8" }]}>
           <Input
             className="klaus-search-input"
             size="large"
@@ -17,7 +17,9 @@ function KHeader() {
             prefix={<Search />}
           />
         </AutoComplete>,
-        <Button className="klaus-button-primary">Connect Users</Button>,
+        <Button key="2" className="klaus-button-primary">
+          Connect Users
+        </Button>,
       ]}
     />
   );
