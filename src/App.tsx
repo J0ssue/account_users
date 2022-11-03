@@ -2,7 +2,7 @@ import { Layout, Skeleton, Space } from "antd";
 import { useEffect, useState } from "react";
 import { User } from "./components/molecules/KCard";
 import KHeader from "./components/molecules/KHeader";
-import KTable from "./components/molecules/KTable";
+import KTable, { EditUser } from "./components/molecules/KTable";
 import data from "./data.json";
 
 import "./less/App.less";
@@ -104,6 +104,19 @@ function App() {
     initialize(unparsedUsers, unselectedUsers);
   }
 
+  function handleUserEdit(newUserData: EditUser) {
+    const cUsers = [...originalUsers];
+    const data: FoundUser = findUserById(newUserData.id, cUsers);
+    if (data) {
+      data.user.user.name = newUserData.name;
+      data.user.user.email = newUserData.email;
+      data.user.user.avatar = newUserData.avatar;
+      cUsers[data.index] = data.user;
+      const unparsedUsers = cUsers.map((user) => user.user);
+      initialize(unparsedUsers, cUsers);
+    }
+  }
+
   return (
     <Layout className="App">
       <KHeader
@@ -129,6 +142,7 @@ function App() {
               dataSource={userData}
               onDelete={handleDelete}
               onGroupDelete={handleGroupDelete}
+              onUserEdit={handleUserEdit}
             />
           </Skeleton>
         </Space>
