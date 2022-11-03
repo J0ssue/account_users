@@ -7,7 +7,8 @@ interface CardType {
   size: CardSize;
 }
 
-interface User {
+export interface User {
+  key?: number;
   id: number;
   name: string;
   email: string;

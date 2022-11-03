@@ -1,21 +1,21 @@
-@import "./variables.less";
-.App {
-  .klaus-page-header {
-    padding: 0px !important;
-    .ant-page-header-heading {
-      h1 {
-        margin: 0px;
-      }
-    }
-  }
+@import "../../../less/variables.less";
+
+.k-table {
   .ant-checkbox-indeterminate .ant-checkbox-inner::after {
     background-color: transparent;
   }
+
   .ant-table-row:hover {
     cursor: pointer;
   }
+
   .ant-table-row:hover > td:first-child::before {
     opacity: 1;
+  }
+
+  .ant-table-row:hover .table-action-buttons {
+    opacity: 1;
+    pointer-events: all;
   }
 
   .ant-table-tbody > tr > td,
@@ -50,17 +50,15 @@
   .ant-table-tbody .ant-table-row-selected > td:first-child::before {
     opacity: 1;
   }
+  .table-action-buttons {
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s ease-in-out;
+  }
 }
-
-.klaus-search-input {
-  background: @default-white;
-  border: 1px solid @border-white;
-  border-radius: @border-radius-small;
-}
-
-.klaus-button-primary {
-  height: @height-btn-input-normal;
-  background: @primary-blue;
-  border-radius: @border-radius-small;
-  color: @default-white;
+.table-header {
+  padding-left: 14px;
+  .text-table-title {
+    margin-right: 22px;
+  }
 }
