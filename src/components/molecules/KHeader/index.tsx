@@ -4,6 +4,7 @@ import { Search } from "../../atoms/Icons/Icons";
 interface Props {
   searchOptions: Array<{ label: string; value: string }>;
   onSearchSelect: (value: any) => void;
+  onConnect: () => void;
 }
 
 const { Title } = Typography;
@@ -27,7 +28,11 @@ function KHeader(props: Props) {
             prefix={<Search />}
           />
         </AutoComplete>,
-        <Button key="2" className="klaus-button-primary">
+        <Button
+          key="2"
+          className="klaus-button-primary"
+          onClick={props.onConnect}
+        >
           Connect Users
         </Button>,
       ]}

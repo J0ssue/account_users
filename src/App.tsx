@@ -1,4 +1,4 @@
-import { Layout, Skeleton, Space } from "antd";
+import { Alert, Layout, Modal, Skeleton, Space } from "antd";
 import { useEffect, useState } from "react";
 import { User } from "./components/molecules/KCard";
 import KHeader from "./components/molecules/KHeader";
@@ -18,12 +18,11 @@ import {
 const { Content } = Layout;
 
 function App() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>();
   const [loading, setLoading] = useState<boolean>(true);
-
   const [originalUsers, setOriginalUsers] = useState<ParsedUser[]>([]);
-
   const [userData, setUserData] = useState<ParsedUser[]>([]);
-
   const [userOptions, setUserOptions] = useState<
     Array<{ label: string; value: string }>
   >([]);
@@ -116,10 +115,18 @@ function App() {
     return cUsers;
   }
 
+  function showAlert(message: string) {
+    setSuccessMessage(message);
+    setTimeout(() => {
+      setSuccessMessage(null);
+    }, 2000);
+  }
+
   function handleUserEdit(user: EditUser, users?: ParsedUser[]) {
     const cUsers = findAndEditUser(user, users ? users : originalUsers);
     const unparsedUsers = cUsers.map((user) => user.user);
     initialize(unparsedUsers, cUsers);
+    showAlert("User edited successfully!");
   }
 
   function handleGroupEdit(newUserData: { [key: number]: EditUser }) {
@@ -138,6 +145,7 @@ function App() {
     });
     const unparsedUsers = cUsers.map((user) => user.user);
     initialize(unparsedUsers, cUsers);
+    showAlert("Users edited successfully!");
   }
 
   return (
@@ -145,6 +153,7 @@ function App() {
       <KHeader
         searchOptions={userOptions}
         onSearchSelect={(value) => setSearchValue(value)}
+        onConnect={() => setIsModalOpen(true)}
       />
       <Content>
         <Space
@@ -167,10 +176,30 @@ function App() {
               onGroupDelete={handleGroupDelete}
               onUserEdit={handleUserEdit}
               onGroupEdit={handleGroupEdit}
+              handleCancel={() => setSelectedRowKeys([])}
             />
           </Skeleton>
         </Space>
       </Content>
+      {successMessage && (
+        <Alert
+          className="alert-success"
+          message={successMessage}
+          type="success"
+          showIcon
+        />
+      )}
+      <Modal
+        title="Connect with users"
+        open={isModalOpen}
+        onOk={() => {
+          showAlert("Succesfully Connected to users!");
+          setIsModalOpen(false);
+        }}
+        onCancel={() => setIsModalOpen(false)}
+      >
+        <h1>Ready To Connect?</h1>
+      </Modal>
     </Layout>
   );
 }

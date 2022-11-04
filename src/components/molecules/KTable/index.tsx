@@ -23,6 +23,7 @@ interface Props {
   onGroupDelete: () => void;
   onUserEdit: (user: EditUser, users?: ParsedUser[]) => void;
   onGroupEdit: (newUserData: { [key: string]: EditUser }) => void;
+  handleCancel: () => void;
 }
 
 const { Text } = Typography;
@@ -79,6 +80,10 @@ function KTable(props: Props) {
 
   const handleCancel = () => {
     form.resetFields();
+
+    if (props.rowSelection.selectedRowKeys.length > 0) {
+      props.handleCancel();
+    }
     setIsModalOpen(false);
   };
 
