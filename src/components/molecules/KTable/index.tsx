@@ -21,7 +21,8 @@ interface Props {
   dataSource: ParsedUser[];
   onDelete: (id: number) => void;
   onGroupDelete: () => void;
-  onUserEdit: (user: EditUser) => void;
+  onUserEdit: (user: EditUser, users?: ParsedUser[]) => void;
+  onGroupEdit: (newUserData: { [key: string]: EditUser }) => void;
 }
 
 const { Text } = Typography;
@@ -48,8 +49,10 @@ function KTable(props: Props) {
   const [form] = Form.useForm();
   const [userEditId, setUserEditId] = useState<number>();
 
-  const showModal = (userId: number) => {
-    setUserEditId(userId);
+  const showModal = (userId?: number) => {
+    if (userId) {
+      setUserEditId(userId);
+    }
     setIsModalOpen(true);
   };
 
@@ -57,11 +60,17 @@ function KTable(props: Props) {
     form
       .validateFields()
       .then((values) => {
-        const { user } = values;
-        user.id = userEditId;
-        props.onUserEdit(user);
-        form.resetFields();
-        setIsModalOpen(false);
+        if (props.rowSelection.selectedRowKeys.length > 0) {
+          props.onGroupEdit(values);
+          form.resetFields();
+          setIsModalOpen(false);
+        } else {
+          const { user } = values;
+          user.id = userEditId;
+          props.onUserEdit(user);
+          form.resetFields();
+          setIsModalOpen(false);
+        }
       })
       .catch((errorInfo) => {
         throw new Error("Form submission failed");
@@ -110,11 +119,13 @@ function KTable(props: Props) {
           <Button
             className="center-button-content round-sm"
             onClick={() => showModal(userId)}
+            disabled={hasSelected}
           >
             <Edit />
             <span>Edit</span>
           </Button>
           <Button
+            disabled={hasSelected}
             className="center-button-content round-sm color-button-white"
             icon={<Trash />}
             onClick={() => {
@@ -126,13 +137,81 @@ function KTable(props: Props) {
     },
   ];
 
+  const FormEditConfig = () => (
+    <Form
+      {...layout}
+      form={form}
+      name="nest-messages"
+      validateMessages={validateMessages}
+    >
+      {props.rowSelection.selectedRowKeys.length > 0 ? (
+        <>
+          {props.rowSelection.selectedRowKeys.map((key) => (
+            <div key={key}>
+              <h4>User ID: {key}</h4>
+              <Form.Item
+                name={[key.toString(), "name"]}
+                label="Name"
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name={[key.toString(), "email"]}
+                label="Email"
+                rules={[{ type: "email" }, { required: true }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name={[key.toString(), "avatar"]}
+                label="Avatar"
+                rules={[{ required: true }]}
+              >
+                <Input />
+              </Form.Item>
+            </div>
+          ))}
+        </>
+      ) : (
+        <>
+          <Form.Item
+            name={["user", "name"]}
+            label="Name"
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name={["user", "email"]}
+            label="Email"
+            rules={[{ type: "email" }, { required: true }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name={["user", "avatar"]}
+            label="Avatar"
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+        </>
+      )}
+    </Form>
+  );
+
   return (
     <>
       <Space className="table-header" size="middle">
         <Text className="text-subtitle-size font-500 text-table-title">
           {props.rowSelection.selectedRowKeys.length} users selected
         </Text>
-        <Button className="center-button-content round-sm" disabled>
+        <Button
+          className="center-button-content round-sm"
+          disabled={!hasSelected}
+          onClick={() => showModal()}
+        >
           <Edit />
           <span>Edit</span>
         </Button>
@@ -164,34 +243,7 @@ function KTable(props: Props) {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        <Form
-          {...layout}
-          form={form}
-          name="nest-messages"
-          validateMessages={validateMessages}
-        >
-          <Form.Item
-            name={["user", "name"]}
-            label="Name"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name={["user", "email"]}
-            label="Email"
-            rules={[{ type: "email" }, { required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name={["user", "avatar"]}
-            label="Avatar"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-        </Form>
+        {<FormEditConfig />}
       </Modal>
     </>
   );

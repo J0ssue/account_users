@@ -104,17 +104,40 @@ function App() {
     initialize(unparsedUsers, unselectedUsers);
   }
 
-  function handleUserEdit(newUserData: EditUser) {
-    const cUsers = [...originalUsers];
+  function findAndEditUser(newUserData: EditUser, users: ParsedUser[]) {
+    const cUsers = [...users];
     const data: FoundUser = findUserById(newUserData.id, cUsers);
     if (data) {
       data.user.user.name = newUserData.name;
       data.user.user.email = newUserData.email;
       data.user.user.avatar = newUserData.avatar;
       cUsers[data.index] = data.user;
-      const unparsedUsers = cUsers.map((user) => user.user);
-      initialize(unparsedUsers, cUsers);
     }
+    return cUsers;
+  }
+
+  function handleUserEdit(user: EditUser, users?: ParsedUser[]) {
+    const cUsers = findAndEditUser(user, users ? users : originalUsers);
+    const unparsedUsers = cUsers.map((user) => user.user);
+    initialize(unparsedUsers, cUsers);
+  }
+
+  function handleGroupEdit(newUserData: { [key: number]: EditUser }) {
+    const cUsers = [...originalUsers];
+    const usersToEdit = selectedRowKeys.map((key) =>
+      findUserById(Number(key), cUsers)
+    );
+    usersToEdit.forEach((user) => {
+      if (user) {
+        user.user.user.name = newUserData[user.user.key].name;
+        user.user.user.email = newUserData[user.user.key].email;
+        user.user.user.avatar = newUserData[user.user.key].avatar;
+        cUsers[user.index] = user.user;
+        setSelectedRowKeys([]);
+      }
+    });
+    const unparsedUsers = cUsers.map((user) => user.user);
+    initialize(unparsedUsers, cUsers);
   }
 
   return (
@@ -143,6 +166,7 @@ function App() {
               onDelete={handleDelete}
               onGroupDelete={handleGroupDelete}
               onUserEdit={handleUserEdit}
+              onGroupEdit={handleGroupEdit}
             />
           </Skeleton>
         </Space>
