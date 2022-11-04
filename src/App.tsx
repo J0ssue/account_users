@@ -101,6 +101,7 @@ function App() {
     );
     const unparsedUsers = unselectedUsers.map((user) => user.user);
     initialize(unparsedUsers, unselectedUsers);
+    setSelectedRowKeys([]);
   }
 
   function findAndEditUser(newUserData: EditUser, users: ParsedUser[]) {
